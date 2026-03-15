@@ -24,6 +24,7 @@ from reporters.email_reporter import EmailReporter
 from reporters.html_generator_enhanced import HTMLReportGenerator
 from utils.database import SkillsDatabase
 from utils.logger import setup_logger
+from data.core_skills import CORE_SKILLS, get_skills_by_category, get_all_categories
 
 # 配置日志
 logger = setup_logger()
@@ -55,41 +56,22 @@ def main():
     # 初始化数据库
     db = SkillsDatabase("data/skills.db")
 
-    # 收集所有技能
-    all_skills = []
+    # 收集所有技能 - 使用预设核心技能库
+    logger.info("\n[1/3] 加载核心技能库...")
+    all_skills = CORE_SKILLS.copy()
+    logger.info(f"  ✓ 从核心库加载: {len(all_skills)} 个技能")
 
-    # 1. 从GitHub获取
-    logger.info("\n[1/4] 从GitHub获取技能更新...")
-    github_token = os.getenv("GH_TOKEN")
-    github_fetcher = GitHubSkillFetcher(github_token)  # 支持无token匿名访问
+    # 显示分类统计
+    categories = get_all_categories()
+    logger.info(f"  ✓ 共 {len(categories)} 个分类: {', '.join(categories)}")
 
-    for repo_info in MONITORED_REPOS:
-        try:
-            skills = github_fetcher.fetch_recent_skills(
-                repo_info["owner"], repo_info["repo"]
-            )
-            logger.info(f"  ✓ {repo_info['name']}: 获取到 {len(skills)} 个技能")
-            all_skills.extend(skills)
-        except Exception as e:
-            logger.error(f"  ✗ {repo_info['name']}: {str(e)}")
-
-    # 2. 从skills.sh获取
-    logger.info("\n[2/4] 从skills.sh获取技能...")
-    skills_sh_fetcher = SkillsShFetcher()
-    try:
-        skills_sh_data = skills_sh_fetcher.fetch_trending(limit=20)
-        logger.info(f"  ✓ skills.sh: 获取到 {len(skills_sh_data)} 个热门技能")
-        all_skills.extend(skills_sh_data)
-    except Exception as e:
-        logger.error(f"  ✗ skills.sh: {str(e)}")
-
-    # 3. 数据去重
-    logger.info("\n[3/4] 数据清洗与去重...")
+    # 2. 数据去重（核心库已去重，这里做安全检查）
+    logger.info("\n[2/3] 数据安全检查...")
     unique_skills = deduplicate_skills(all_skills)
-    logger.info(f"  → 去重后: {len(unique_skills)} 个技能")
+    logger.info(f"  → 有效技能: {len(unique_skills)} 个")
 
-    # 4. 评估技能
-    logger.info("\n[4/4] 评估技能...")
+    # 3. 评估技能
+    logger.info("\n[3/3] 评估技能...")
     evaluated_skills = evaluate_skills(unique_skills)
 
     # 5. 存储到数据库

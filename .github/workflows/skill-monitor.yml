@@ -22,7 +22,7 @@ jobs:
       
       - name: Run skill monitor
         env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          # GH_TOKEN: ${{ secrets.GH_TOKEN }}  # 可选: GitHub API Token (当前使用预设技能库，无需配置)
           EMAIL_RECIPIENT: ${{ secrets.EMAIL_RECIPIENT }}
           SMTP_HOST: ${{ secrets.SMTP_HOST }}
           SMTP_PORT: ${{ secrets.SMTP_PORT }}
