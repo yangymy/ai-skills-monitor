@@ -60,7 +60,7 @@ def main():
 
     # 1. 从GitHub获取
     logger.info("\n[1/4] 从GitHub获取技能更新...")
-    github_token = os.getenv("GITHUB_TOKEN")
+    github_token = os.getenv("GH_TOKEN")
     github_fetcher = GitHubSkillFetcher(github_token)  # 支持无token匿名访问
 
     for repo_info in MONITORED_REPOS:
