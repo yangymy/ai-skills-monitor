@@ -1,0 +1,12 @@
+# AI技能监控系统依赖
+requests>=2.31.0
+beautifulsoup4>=4.12.0
+lxml>=4.9.0
+pydantic>=2.5.0
+jinja2>=3.1.0
+python-dateutil>=2.8.0
+schedule>=1.2.0
+sendgrid>=6.11.0
+markdown>=3.5.0
+pyyaml>=6.0.1
+typing-extensions>=4.8.0
