@@ -64,7 +64,7 @@ jobs:
             reports/*.html
             reports/*.json
             data/skills.db
-        retention-days: 30
+          retention-days: 30
       
       - name: Commit data updates
         run: |
